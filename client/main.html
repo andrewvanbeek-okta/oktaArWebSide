@@ -1,0 +1,74 @@
+<head>
+  <title>OktaAr</title>
+  <script src="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/1.7.0/js/okta-sign-in.min.js" type="text/javascript"></script>
+  <link href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/1.7.0/css/okta-sign-in.min.css" type="text/css" rel="stylesheet">
+  <!-- Customizable css theme options. Link your own customized copy of this file or override styles in-line -->
+  <link href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/1.7.0/css/okta-theme.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+  <h1>Welcome to the Thunderdome</h1>
+
+  <div id="okta-login-container"></div>
+  <script type="text/javascript">
+
+    var orgUrl = 'https://vanbeektech.okta.com';
+    var oktaSignIn = new OktaSignIn({baseUrl: orgUrl});
+    navigator.geolocation.getCurrentPosition(function(location) {
+  console.log(location.coords.latitude);
+  console.log(location.coords.longitude);
+  console.log(location.coords.accuracy);
+  return {latitude: location.coords.latitude, longitude: location.coords.longitude}
+});
+    var place = navigator.geolocation.getCurrentPosition(() =>location)
+    console.log(place)
+      oktaSignIn.session.get(function (res){
+        console.log(res)
+      })
+
+   
+    oktaSignIn.renderEl(
+      { el: '#okta-login-container' },
+      function (res) {
+
+        if (res.status === 'SUCCESS') { res.session.setCookieAndRedirect(orgUrl);
+           var place = navigator.geolocation.getCurrentPosition(() =>location)
+           var userInfo = {name: res.login, place: place}
+             $.ajax({
+             url: '/users',
+             type: 'post',
+             data: userInfo,
+           })
+           .done(function() {
+             console.log("success");
+           })
+           .fail(function() {
+             console.log("error");
+           })
+           .always(function() {
+             console.log("complete");
+           });
+           
+           
+       
+
+        }
+      }
+    );
+  </script>
+</body>
+
+<template name="hello">
+  <button>Click Me</button>
+  <p>You've pressed the button {{counter}} times.</p>
+</template>
+
+<template name="info">
+  <h2>Learn Meteor!</h2>
+  <ul>
+    <li><a href="https://www.meteor.com/try" target="_blank">Do the Tutorial</a></li>
+    <li><a href="http://guide.meteor.com" target="_blank">Follow the Guide</a></li>
+    <li><a href="https://docs.meteor.com" target="_blank">Read the Docs</a></li>
+    <li><a href="https://forums.meteor.com" target="_blank">Discussions</a></li>
+  </ul>
+</template>
